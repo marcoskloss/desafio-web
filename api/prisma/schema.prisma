@@ -1,0 +1,20 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int @id @default(autoincrement())
+  code        Int @unique
+  name        String 
+  birth_date  DateTime 
+  image_url   String
+
+  @@map("users")
+}
+
