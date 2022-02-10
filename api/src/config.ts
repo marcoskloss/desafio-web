@@ -11,7 +11,7 @@ const getPath = (): string => {
 
 dotenv.config({ path: getPath() });
 
-const files = path.resolve(__dirname, '../../');
+const files = path.resolve(__dirname, '../');
 
 moduleAlias.addAliases({
   '@src': path.join(files, 'src'),
