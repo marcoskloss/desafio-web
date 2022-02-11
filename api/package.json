@@ -5,10 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
-    "dev": "ts-node-dev --transpile-only 'src/index.ts'",
+    "dev": "ts-node-dev --exit-child --transpile-only 'src/index.ts'",
     "db:migrate": "npx prisma migrate dev",
-    "pretest": "node ./scripts/pretest.js"
+    "test:unit": "jest",
+    "test:functional": "jest ./test --runInBand",
+    "test": "npm run test:unit --ignore-scripts && npm run test:functional --ignore-scripts",
+    "pretest": "node ./scripts/pretest.js",
+    "pretest:unit": "npm run pretest",
+    "pretest:functional": "npm run pretest"
   },
   "keywords": [],
   "author": "Marcos Kloss",
