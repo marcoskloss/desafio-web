@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { resolve } = require('path');
 const root = resolve(__dirname);
 
@@ -13,4 +11,6 @@ module.exports = {
   moduleNameMapper: {
     '@src/(.*)': '<rootDir>/src/$1',
   },
+  setupFiles: ['<rootDir>jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>jest.setup.ts'],
 };

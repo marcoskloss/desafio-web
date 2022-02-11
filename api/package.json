@@ -7,7 +7,8 @@
     "build": "tsc",
     "test": "jest",
     "dev": "ts-node-dev --transpile-only 'src/index.ts'",
-    "db:migrate": "npx prisma migrate dev --preview-feature"
+    "db:migrate": "npx prisma migrate dev",
+    "pretest": "node ./scripts/pretest.js"
   },
   "keywords": [],
   "author": "Marcos Kloss",
@@ -17,7 +18,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/module-alias": "^2.0.1",
-    "@types/node": "^17.0.16",
+    "@types/node": "^17.0.17",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
     "eslint": "^8.8.0",
