@@ -17,6 +17,7 @@ API do desafio, consiste em um crud de usuários.
 
   cp .env.example .env
   # preencha as variáveis de ambiente no arquivo .env
+  # o arquivo .env.example já contém com uma configuração funcional
 
   # subindo o container do postgresql
   sudo docker-compose up -d
@@ -24,9 +25,15 @@ API do desafio, consiste em um crud de usuários.
   # setup do Prisma
   npx prisma generate
 
-  # rodando a migration
+  # rodando as migrations
   npm run db:migrate
 
   # start no server
   npm run dev
+```
+
+## Rodando os testes
+
+```bash
+  npm t
 ```
