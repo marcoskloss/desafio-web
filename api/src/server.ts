@@ -12,8 +12,8 @@ export class Server {
   constructor(private port = 3333) {}
 
   public async init(): Promise<void> {
-    await this.initDatabaseConnection();
     this.setupExpress();
+    await this.initDatabaseConnection();
   }
 
   public start(): void {
@@ -26,8 +26,12 @@ export class Server {
     this.app.use(express.json());
     this.app.use(cors({ origin: '*' })); // todo: allow only UI origin
 
-    this.app.use(routes);
+    this.app.use((req, _, next) => {
+      console.log(`{${req.method}} - ${req.path}`);
+      next();
+    });
 
+    this.app.use(routes);
     this.app.use((_, res) => res.status(404).end());
   }
 
