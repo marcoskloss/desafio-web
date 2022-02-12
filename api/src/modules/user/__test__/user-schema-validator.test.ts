@@ -9,7 +9,6 @@ describe('user-schema-validator tests', () => {
       name: 'username',
       code: 1,
       birth_date: new Date(),
-      image_url: 'url',
     };
 
     const req = { body: validSchema } as Request;
@@ -41,7 +40,6 @@ describe('user-schema-validator tests', () => {
           expect.stringContaining('name'),
           expect.stringContaining('code'),
           expect.stringContaining('birth_date'),
-          expect.stringContaining('image_url'),
         ]),
       })
     );

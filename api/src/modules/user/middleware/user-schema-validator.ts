@@ -1,7 +1,7 @@
 import { MiddlewareHandler } from '@src/types/middleware';
 
 export const userSchemaValidator: MiddlewareHandler = (req, res, next) => {
-  const required = ['name', 'code', 'birth_date', 'image_url'];
+  const required = ['name', 'code', 'birth_date'];
   const { body } = req;
 
   const bodyKeys = Object.keys(body);

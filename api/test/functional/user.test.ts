@@ -40,7 +40,6 @@ describe('[POST] /users', () => {
     };
 
     const body = {
-      name: 'username',
       birth_date: new Date(),
       code: 123,
     };

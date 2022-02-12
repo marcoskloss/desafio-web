@@ -1,6 +1,14 @@
+import fs from 'fs';
+import path from 'path';
 import { ControllerHandler } from '@src/types/controller';
 import { UserModel } from '@src/modules/user/model/user-model';
 import { prisma } from '@src/database';
+
+const DEFAULT_IMAGE_PATH = 'default-image.png';
+
+function getImagePath(url: string): string {
+  return path.resolve(__dirname, '..', '..', '..', 'images', url);
+}
 
 export class UserController {
   public show: ControllerHandler = async (req, res) => {
@@ -22,6 +30,7 @@ export class UserController {
     const userData = {
       ...body,
       birth_date: new Date(body.birth_date),
+      image_url: DEFAULT_IMAGE_PATH,
     };
 
     const userModel = new UserModel();
@@ -44,5 +53,58 @@ export class UserController {
     );
 
     return res.json(updatedUser);
+  };
+
+  public uploadImage: ControllerHandler = async (req, res) => {
+    const userModel = new UserModel();
+    const userId = Number(req.params.userId);
+
+    const user = await prisma.user.findFirst({ where: { id: userId } });
+
+    if (!user) return res.json({ error: 'Usuário não encontrado!' });
+
+    if (user?.image_url !== DEFAULT_IMAGE_PATH) {
+      const oldfilePath = getImagePath(user?.image_url);
+      fs.unlinkSync(oldfilePath);
+    }
+
+    const updatedUser = await userModel.update(userId, {
+      image_url: req.file?.filename,
+    });
+
+    return res.json(updatedUser);
+  };
+
+  public getImage: ControllerHandler = async (req, res) => {
+    const user = await prisma.user.findFirst({
+      where: { id: Number(req.params.userId) },
+    });
+
+    if (!user) return res.json({ error: 'Usuário não encontrado!' });
+
+    const imagePath = getImagePath(user?.image_url);
+
+    const imageBuffer = fs.readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
+
+    return res.json({ image: 'data:image/png;base64,' + base64Image });
+  };
+
+  public deleteImage: ControllerHandler = async (req, res) => {
+    const userId = Number(req.params.userId);
+
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!user) return res.json({ error: 'Usuário não encontrado!' });
+
+    const imagePath = getImagePath(user.image_url);
+    fs.unlinkSync(imagePath);
+
+    const userModel = new UserModel();
+    await userModel.update(userId, { image_url: DEFAULT_IMAGE_PATH });
+
+    return res.json(null);
   };
 }
