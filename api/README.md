@@ -22,9 +22,6 @@ API do desafio, consiste em um crud de usuários.
   # subindo o container do postgresql
   sudo docker-compose up -d
 
-  # setup do Prisma
-  npx prisma generate
-
   # rodando as migrations
   npm run db:migrate
 
