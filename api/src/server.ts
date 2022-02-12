@@ -1,9 +1,11 @@
-import express from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import * as http from 'http';
 
 import routes from './routes';
 import { prisma } from '@src/database';
+import { AppError } from '@src/errors/app-error';
 
 export class Server {
   private app = express();
@@ -33,10 +35,29 @@ export class Server {
 
     this.app.use(routes);
     this.app.use((_, res) => res.status(404).end());
+
+    this.app.use(this.errorHandler);
   }
 
   private async initDatabaseConnection(): Promise<void> {
     await prisma.$connect();
+  }
+
+  private errorHandler(
+    error: Error,
+    req: Request,
+    res: Response,
+    _: NextFunction
+  ): Response {
+    if (error instanceof AppError) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
+    console.log(`!ERROR! {${req.method}} - ${req.url} \n`, error);
+    return res.status(500).json({
+      error:
+        'Um erro inesperado aconteceu, mas fique tranquilo que isso não é sua culpa.',
+    });
   }
 
   public async close(): Promise<void> {

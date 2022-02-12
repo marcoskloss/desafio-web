@@ -1,4 +1,5 @@
 import { User } from '@prisma/client';
+import { AppError } from '@src/errors/app-error';
 import { UserService } from '@src/modules/user/services/user-service';
 
 export class UserModel {
@@ -8,7 +9,9 @@ export class UserModel {
     const isUniqueCode = await this.userService.isUniqueCode(data.code);
 
     if (!isUniqueCode) {
-      throw new Error('O código informado já foi utilizado em outro usuário!');
+      throw new AppError(
+        'O código informado já foi utilizado em outro usuário!'
+      );
     }
 
     return this.userService.insert(data);
