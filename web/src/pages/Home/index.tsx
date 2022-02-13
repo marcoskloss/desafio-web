@@ -9,8 +9,7 @@ import {
   Container,
   UserList,
 } from "../../components";
-import { api } from "../../lib/api";
-import { User } from "../../types/User";
+import { useUserContext } from "../../context/userContext";
 import { UserDetails } from "./UserDetails";
 
 const SubHeader = styled.div`
@@ -20,25 +19,24 @@ const SubHeader = styled.div`
 `;
 
 function App() {
-  const [userList, setUserList] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const loadUserList = async (): Promise<void> => {
-    setLoading(true);
-
-    const { data } = await api.get("/users");
-    setUserList(data);
-
-    setLoading(false);
-  };
+  const [showDetails, setShowDetails] = useState(false);
+  const { loading, loadUserList, userList, setCurrentEditingUser } =
+    useUserContext();
 
   useEffect(() => {
     loadUserList();
-  }, []);
+  }, [loadUserList]);
 
   return (
     <PageContainer>
-      <UserDetails />
+      {showDetails && (
+        <UserDetails
+          onClose={() => {
+            setCurrentEditingUser(null);
+            setShowDetails(false);
+          }}
+        />
+      )}
 
       <Header>
         <h1>Teste web</h1>
@@ -47,12 +45,24 @@ function App() {
       <Container as="main">
         <SubHeader>
           <h4>Listagem de usuários:</h4>
-          <Button variant="green" color="white">
+          <Button
+            variant="green"
+            onClick={() => {
+              setShowDetails(true);
+            }}
+          >
             Novo
           </Button>
         </SubHeader>
 
-        <UserList userList={userList} isLoading={loading} />
+        <UserList
+          userList={userList}
+          isLoading={loading}
+          onClickItem={(user) => {
+            setCurrentEditingUser(user);
+            setShowDetails(true);
+          }}
+        />
       </Container>
     </PageContainer>
   );
