@@ -4,7 +4,7 @@ import { ControllerHandler } from '@src/types/controller';
 import { UserModel } from '@src/modules/user/model/user-model';
 import { prisma } from '@src/database';
 
-const DEFAULT_IMAGE_PATH = 'default-image.png';
+const DEFAULT_IMAGE_PATH = 'default-image.jpg';
 
 function getImagePath(url: string): string {
   return path.resolve(__dirname, '..', '..', '..', 'images', url);
