@@ -1,6 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 
+import { serverUrl } from "../../lib/api";
+
 type SCardProps = { w?: string };
 const SCard = styled.div<SCardProps>`
   border-radius: 4px;
@@ -17,7 +19,6 @@ const SCard = styled.div<SCardProps>`
   display: flex;
 
   .image-wrapper {
-    background: tomato;
     width: 130px;
   }
 
@@ -40,11 +41,27 @@ const SCard = styled.div<SCardProps>`
   }
 `;
 
-type CardProps = { name: string; code: number };
-export const Card: React.FC<CardProps> = ({ code, name }) => {
+type CardProps = {
+  name: string;
+  code: number;
+  imageUrl: string;
+  onClick: () => void;
+};
+export const Card: React.FC<CardProps> = ({
+  code,
+  name,
+  imageUrl,
+  onClick,
+}) => {
   return (
-    <SCard>
-      <div className="image-wrapper">ft</div>
+    <SCard onClick={onClick}>
+      {/* <div className="image-wrapper"> */}
+      <img
+        className="image-wrapper"
+        alt="user"
+        src={`${serverUrl}/users/images/${imageUrl}`}
+      />
+      {/* </div> */}
       <div className="user-info-container">
         <div style={{ padding: "0 5px" }}>
           <p className="user-name">{name}</p>

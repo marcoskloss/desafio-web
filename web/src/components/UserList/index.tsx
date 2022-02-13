@@ -38,15 +38,28 @@ const LoadingOverlay = ({ show }: { show: boolean }) => {
 type UserListProps = {
   userList: User[];
   isLoading: boolean;
+  onClickItem: (user: User) => void;
 };
 
-export const UserList: React.FC<UserListProps> = ({ userList, isLoading }) => {
+export const UserList: React.FC<UserListProps> = ({
+  userList,
+  isLoading,
+  onClickItem,
+}) => {
   return (
     <UserGrid style={{ position: "relative" }}>
       <LoadingOverlay show={isLoading} />
 
       {userList.map((user) => {
-        return <Card key={user.code} name={user.name} code={user.code} />;
+        return (
+          <Card
+            key={user.code}
+            name={user.name}
+            code={user.code}
+            imageUrl={user.image_url}
+            onClick={() => onClickItem(user)}
+          />
+        );
       })}
     </UserGrid>
   );

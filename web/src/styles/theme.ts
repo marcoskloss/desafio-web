@@ -6,6 +6,7 @@ const colors = {
   color: "#24292f",
   green: "#3fb861",
   darkenGreen: "#2c974b",
+  red: "#A40E26",
 };
 
 export interface Theme {
