@@ -75,21 +75,6 @@ export class UserController {
     return res.json(updatedUser);
   };
 
-  public getImage: ControllerHandler = async (req, res) => {
-    const user = await prisma.user.findFirst({
-      where: { id: Number(req.params.userId) },
-    });
-
-    if (!user) return res.json({ error: 'Usuário não encontrado!' });
-
-    const imagePath = getImagePath(user?.image_url);
-
-    const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
-
-    return res.json({ image: 'data:image/png;base64,' + base64Image });
-  };
-
   public deleteImage: ControllerHandler = async (req, res) => {
     const userId = Number(req.params.userId);
 
