@@ -10,6 +10,10 @@ function getImagePath(url: string): string {
   return path.resolve(__dirname, '..', '..', '..', 'images', url);
 }
 
+function fileExists(url: string): boolean {
+  return fs.existsSync(url);
+}
+
 export class UserController {
   public show: ControllerHandler = async (req, res) => {
     const userId = Number(req.params.userId);
@@ -47,8 +51,8 @@ export class UserController {
 
     if (!user) return res.json({ error: 'Usuário não encontrado!' });
 
-    if (user.image_url !== DEFAULT_IMAGE_PATH) {
-      const imagePath = getImagePath(user.image_url);
+    const imagePath = getImagePath(user.image_url);
+    if (user.image_url !== DEFAULT_IMAGE_PATH && fileExists(imagePath)) {
       fs.unlinkSync(imagePath);
     }
 
@@ -74,8 +78,9 @@ export class UserController {
 
     if (!user) return res.json({ error: 'Usuário não encontrado!' });
 
-    if (user?.image_url !== DEFAULT_IMAGE_PATH) {
-      const oldfilePath = getImagePath(user?.image_url);
+    const oldfilePath = getImagePath(user?.image_url);
+
+    if (user.image_url !== DEFAULT_IMAGE_PATH && fileExists(oldfilePath)) {
       fs.unlinkSync(oldfilePath);
     }
 
@@ -97,7 +102,7 @@ export class UserController {
 
     const imagePath = getImagePath(user.image_url);
 
-    if (user.image_url !== DEFAULT_IMAGE_PATH) {
+    if (user.image_url !== DEFAULT_IMAGE_PATH && fileExists(imagePath)) {
       fs.unlinkSync(imagePath);
     }
 
