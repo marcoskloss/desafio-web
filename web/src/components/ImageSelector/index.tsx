@@ -3,10 +3,7 @@ import styled from "styled-components";
 
 import { useState, useRef, useCallback } from "react";
 import toast from "react-hot-toast";
-
-export const ImageSelector = ({ ...props }) => {
-  return <div {...props}>img</div>;
-};
+import { fileToBase64 } from "../../util/fileToBase64";
 
 const SImageOverlay = styled.div`
   position: absolute;
@@ -24,14 +21,37 @@ const SImageOverlay = styled.div`
   p {
     padding: 4px;
     cursor: pointer;
+    color: white;
 
     &:hover {
-      outline: "1px dashed white";
+      outline: 1px dashed white;
     }
   }
 `;
 
-const ImageOverlay = ({ onClearImage, onNewImage }) => {
+const SImageSelector = styled.div`
+  border: 1px dashed ${(props) => props.theme.colors.borderColor};
+  padding: 8px;
+  width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: ${(props) => props.theme.colors.darkenBorderColor};
+  }
+`;
+
+type ImageOverlayProps = {
+  onClearImage: () => Promise<void>;
+  onNewImage: () => void;
+};
+const ImageOverlay: React.FC<ImageOverlayProps> = ({
+  onClearImage,
+  onNewImage,
+}) => {
   return (
     <SImageOverlay>
       <p onClick={onNewImage}>Selecione uma imagem</p>
@@ -40,7 +60,12 @@ const ImageOverlay = ({ onClearImage, onNewImage }) => {
   );
 };
 
-const Image = ({ url, onOpenImage, onClearImage }) => {
+type ImageProps = {
+  url?: string;
+  onClearImage: () => Promise<void>;
+  onOpenImage: () => void;
+};
+const Image: React.FC<ImageProps> = ({ url, onOpenImage, onClearImage }) => {
   const [showOverlay, setShowOverlay] = useState(false);
 
   if (url) {
@@ -49,8 +74,8 @@ const Image = ({ url, onOpenImage, onClearImage }) => {
         onMouseEnter={() => setShowOverlay(true)}
         onMouseLeave={() => setShowOverlay(false)}
         style={{
-          maxWidth: "200px",
-          maxHeight: "250px",
+          maxWidth: "250px",
+          maxHeight: "300px",
           marginBottom: "30px",
           position: "relative",
         }}
@@ -58,35 +83,38 @@ const Image = ({ url, onOpenImage, onClearImage }) => {
         {showOverlay && (
           <ImageOverlay onNewImage={onOpenImage} onClearImage={onClearImage} />
         )}
-        <img alt="User" src={url} />
+        <img alt="User" src={url} style={{ width: "250px", height: "300px" }} />
       </div>
     );
   }
 
   return (
-    <div
-      onClick={() => onOpenImage()}
-      style={{
-        marginBottom: "30px",
-        border: "1px solid white",
-        padding: "8px",
-        width: "150px",
-        cursor: "pointer",
-      }}
-    >
+    <SImageSelector onClick={() => onOpenImage()}>
       Selecione uma imagem
-    </div>
+    </SImageSelector>
   );
 };
 
-export const ImageSelectorTODO = ({ url, onRemoveImage, onNewImage }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+type ImageSelectorProps = {
+  url?: string;
+  onRemoveImage: () => Promise<void>;
+  onNewImage: (file: File) => Promise<void>;
+};
 
-  const onClearImage = useCallback(() => {
+export const ImageSelector: React.FC<ImageSelectorProps> = ({
+  url,
+  onRemoveImage,
+  onNewImage,
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [imageUrl, setImageUrl] = useState(url);
+
+  const onClearImage = useCallback(async () => {
     if (inputRef.current) inputRef.current.value = "";
-    // TODO
-    // onRemoveImage
-  }, []);
+    setImageUrl(undefined);
+
+    onRemoveImage();
+  }, [onRemoveImage]);
 
   const onOpenImage = useCallback(() => {
     inputRef.current?.click();
@@ -113,9 +141,10 @@ export const ImageSelectorTODO = ({ url, onRemoveImage, onNewImage }) => {
               return;
             }
 
-            // TODO
-            // onNewImage
-            // upload do File usando o formData
+            const base64Image = await fileToBase64(file);
+            setImageUrl(base64Image);
+
+            onNewImage(file);
           } catch (err) {
             toast.error("Algum erro aconteceu, tente novamente.");
             if (inputRef.current) inputRef.current.value = "";
@@ -123,7 +152,11 @@ export const ImageSelectorTODO = ({ url, onRemoveImage, onNewImage }) => {
           }
         }}
       />
-      <Image url={url} onOpenImage={onOpenImage} onClearImage={onClearImage} />
+      <Image
+        url={imageUrl}
+        onOpenImage={onOpenImage}
+        onClearImage={onClearImage}
+      />
     </>
   );
 };
