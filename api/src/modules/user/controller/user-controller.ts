@@ -41,7 +41,18 @@ export class UserController {
 
   public delete: ControllerHandler = async (req, res) => {
     const userModel = new UserModel();
-    await userModel.delete(Number(req.params.userId));
+    const user = await prisma.user.findFirst({
+      where: { id: Number(req.params.userId) },
+    });
+
+    if (!user) return res.json({ error: 'Usuário não encontrado!' });
+
+    if (user.image_url !== DEFAULT_IMAGE_PATH) {
+      const imagePath = getImagePath(user.image_url);
+      fs.unlinkSync(imagePath);
+    }
+
+    await userModel.delete(user.id);
     return res.status(204).end();
   };
 
