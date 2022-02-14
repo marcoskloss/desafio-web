@@ -1,6 +1,6 @@
 # Desafio Web
 
-Parte web do desafio, consiste em uma app criada com CRA e que proporciona o cadastro e listagem de usuários.
+Parte web do desafio, consiste em uma app criada com CRA e que proporciona o cadastro e listagem de usuários. A estilização tem como inspiração (cópia) o tema do Github.
 
 ## Ferramentas utilizadas
 
