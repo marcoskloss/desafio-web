@@ -85,7 +85,10 @@ export class UserController {
     if (!user) return res.json({ error: 'Usuário não encontrado!' });
 
     const imagePath = getImagePath(user.image_url);
-    fs.unlinkSync(imagePath);
+
+    if (user.image_url !== DEFAULT_IMAGE_PATH) {
+      fs.unlinkSync(imagePath);
+    }
 
     const userModel = new UserModel();
     await userModel.update(userId, { image_url: DEFAULT_IMAGE_PATH });
