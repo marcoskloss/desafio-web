@@ -5,9 +5,9 @@ export const userSchemaValidator: MiddlewareHandler = (req, res, next) => {
   const { body } = req;
 
   const bodyKeys = Object.keys(body);
+  
   const missingFields = required
-    .map((field) => (!bodyKeys.includes(field) ? field : undefined))
-    .filter(Boolean);
+    .filter(field => !bodyKeys.includes(field));
 
   if (missingFields.length > 0) {
     return res.status(400).json({
